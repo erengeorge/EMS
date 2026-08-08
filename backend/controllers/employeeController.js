@@ -107,10 +107,47 @@ const deleteEmployee = async (req, res) => {
     }
 };
 
+const getEmployeeReport = async (req, res) => {
+    try {
+        const pool = await connectDB();
+
+        const result = await pool.request().query(`
+            SELECT
+                COUNT(*) AS TotalEmployees,
+                ISNULL(SUM(Salary), 0) AS TotalSalary,
+                ISNULL(AVG(Salary), 0) AS AverageSalary
+            FROM Employees
+        `);
+
+        const employees = await pool.request().query(`
+            SELECT
+                Id,
+                Name,
+                Department,
+                Position,
+                Salary
+            FROM Employees
+            ORDER BY Id
+        `);
+
+        res.json({
+            summary: result.recordset[0],
+            employees: employees.recordset
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to generate employee report",
+            error: error.message
+        });
+    }
+};
+
 
 module.exports = {
     getEmployees,
     createEmployee,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
+    getEmployeeReport
 };

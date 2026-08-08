@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import { jsPDF } from 'jspdf'
 
 function App() {
 
@@ -13,6 +14,10 @@ function App() {
 
   const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const [report, setReport] = useState(null)
+  const [showReport, setShowReport] = useState(false)
+
   const [editingId, setEditingId] = useState(null)
 
   const [editForm, setEditForm] = useState({
@@ -88,6 +93,98 @@ function App() {
   useEffect(() => {
     fetchEmployees()
   }, [])
+
+  const fetchReport = async () => {
+    try {
+      const token = localStorage.getItem('token')
+
+      const response = await fetch('http://localhost:5000/api/employees/report', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to generate report')
+      }
+
+      setReport(data)
+      setShowReport(true)
+    } catch (error) {
+      console.error('Failed to generate report:', error)
+    }
+  }
+
+  const downloadReportPDF = async () => {
+    try {
+      const token = localStorage.getItem('token')
+
+      const response = await fetch('http://localhost:5000/api/employees/report', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to generate report')
+      }
+
+      const doc = new jsPDF()
+
+      doc.setFontSize(18)
+      doc.text('Employee Management System', 20, 20)
+
+      doc.setFontSize(14)
+      doc.text('Employee Report', 20, 32)
+
+      doc.setFontSize(11)
+      doc.text(`Total Employees: ${data.summary.TotalEmployees}`, 20, 48)
+      doc.text(
+        `Total Salary: P${Number(data.summary.TotalSalary).toLocaleString()}`,
+        20,
+        58
+      )
+      doc.text(
+        `Average Salary: P${Number(data.summary.AverageSalary).toLocaleString()}`,
+        20,
+        68
+      )
+
+      let y = 85
+
+      doc.setFontSize(10)
+      doc.text('ID', 20, y)
+      doc.text('Name', 35, y)
+      doc.text('Department', 90, y)
+      doc.text('Position', 125, y)
+      doc.text('Salary', 175, y)
+
+      y += 8
+
+      data.employees.forEach((employee) => {
+        doc.text(String(employee.Id), 20, y)
+        doc.text(employee.Name, 35, y)
+        doc.text(employee.Department, 90, y)
+        doc.text(employee.Position, 125, y)
+        doc.text(`P${Number(employee.Salary).toLocaleString()}`, 175, y)
+
+        y += 8
+
+        if (y > 280) {
+          doc.addPage()
+          y = 20
+        }
+      })
+
+      doc.save('employee-report.pdf')
+    } catch (error) {
+      console.error('Failed to download report:', error)
+    }
+  }
 
   const handleChange = (event) => {
     setForm({
@@ -345,6 +442,8 @@ function App() {
           <div className="section-header">
             <h2>Employees</h2>
             <button onClick={fetchEmployees}>Refresh</button>
+            <button onClick={fetchReport}>Generate Report</button>
+            <button onClick={downloadReportPDF}>Download PDF</button>
           </div>
 
           {loading ? (
@@ -389,6 +488,54 @@ function App() {
             </div>
           )}
         </section>
+        {showReport && report && (
+          <section className="report-section">
+            <h2>Employee Report</h2>
+
+            <div className="report-summary">
+              <div>
+                <h3>Total Employees</h3>
+                <p>{report.summary.TotalEmployees}</p>
+              </div>
+
+              <div>
+                <h3>Total Salary</h3>
+                <p>₱{Number(report.summary.TotalSalary).toLocaleString()}</p>
+              </div>
+
+              <div>
+                <h3>Average Salary</h3>
+                <p>₱{Number(report.summary.AverageSalary).toLocaleString()}</p>
+              </div>
+            </div>
+
+            <h3>Employee Details</h3>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Position</th>
+                  <th>Salary</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {report.employees.map((employee) => (
+                  <tr key={employee.Id}>
+                    <td>{employee.Id}</td>
+                    <td>{employee.Name}</td>
+                    <td>{employee.Department}</td>
+                    <td>{employee.Position}</td>
+                    <td>₱{Number(employee.Salary).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
       </main>
     </div>
   )
