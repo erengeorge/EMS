@@ -2,6 +2,25 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { jsPDF } from 'jspdf'
 
+const DEPARTMENT_BADGE = {}
+const BADGE_CLASSES = ['badge', 'badge-b', 'badge-c', 'badge-d', 'badge-e']
+
+function badgeClassFor(department) {
+  if (!DEPARTMENT_BADGE[department]) {
+    const nextIndex = Object.keys(DEPARTMENT_BADGE).length % BADGE_CLASSES.length
+    DEPARTMENT_BADGE[department] = BADGE_CLASSES[nextIndex]
+  }
+  return DEPARTMENT_BADGE[department]
+}
+
+function initialsFor(name) {
+  if (!name) return '?'
+  const parts = name.trim().split(/\s+/)
+  const first = parts[0]?.[0] || ''
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+  return (first + last).toUpperCase()
+}
+
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -306,8 +325,9 @@ function App() {
     return (
       <div className="login-container">
         <div className="login-box">
+          <div className="login-seal">EMS</div>
           <h1>Employee Management System</h1>
-          <h2>Login</h2>
+          <h2>Sign in to continue</h2>
 
           <form onSubmit={handleLogin}>
             <input
@@ -330,7 +350,7 @@ function App() {
               <p className="login-error">{loginError}</p>
             )}
 
-            <button type="submit">Login</button>
+            <button type="submit">Log in</button>
           </form>
         </div>
       </div>
@@ -339,81 +359,47 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1>Employee Management System</h1>
-        <p>Manage your employees efficiently</p>
+      <aside className="rail">
+        <div className="rail-mark">EMS</div>
+        <div className="rail-line" />
+        <button className="rail-logout" onClick={handleLogout}>
+          Logout
+        </button>
+      </aside>
 
-        <button onClick={handleLogout}>Logout</button>
-      </header>
+      <div className="content">
+        <header className="header">
+          <p className="header-eyebrow mono">Employee Ledger</p>
+          <h1>Employee Management System</h1>
+          <p>Keep every record, role, and rate in one place.</p>
+        </header>
 
-      <main className="main">
-        <section className="form-section">
-          <h2>Add Employee</h2>
-
-          <form onSubmit={handleSubmit}>
-            <input
-              name="Name"
-              placeholder="Name"
-              value={form.Name}
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              name="Department"
-              placeholder="Department"
-              value={form.Department}
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              name="Position"
-              placeholder="Position"
-              value={form.Position}
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              name="Salary"
-              type="number"
-              placeholder="Salary"
-              value={form.Salary}
-              onChange={handleChange}
-              required
-            />
-
-            <button type="submit">Add Employee</button>
-          </form>
-        </section>
-        
-        {editingId !== null && (
+        <main className="main">
           <section className="form-section">
-            <h2>Edit Employee</h2>
+            <h2>Add employee</h2>
 
-            <form onSubmit={updateEmployee}>
+            <form onSubmit={handleSubmit}>
               <input
                 name="Name"
                 placeholder="Name"
-                value={editForm.Name}
-                onChange={handleEditChange}
+                value={form.Name}
+                onChange={handleChange}
                 required
               />
 
               <input
                 name="Department"
                 placeholder="Department"
-                value={editForm.Department}
-                onChange={handleEditChange}
+                value={form.Department}
+                onChange={handleChange}
                 required
               />
 
               <input
                 name="Position"
                 placeholder="Position"
-                value={editForm.Position}
-                onChange={handleEditChange}
+                value={form.Position}
+                onChange={handleChange}
                 required
               />
 
@@ -421,122 +407,208 @@ function App() {
                 name="Salary"
                 type="number"
                 placeholder="Salary"
-                value={editForm.Salary}
-                onChange={handleEditChange}
+                value={form.Salary}
+                onChange={handleChange}
                 required
               />
 
-              <button type="submit">Update Employee</button>
-
-              <button
-                type="button"
-                onClick={() => setEditingId(null)}
-              >
-                Cancel
-              </button>
+              <button type="submit" className="btn-brass">Add employee</button>
             </form>
           </section>
-        )}
 
-        <section>
-          <div className="section-header">
-            <h2>Employees</h2>
-            <button onClick={fetchEmployees}>Refresh</button>
-            <button onClick={fetchReport}>Generate Report</button>
-            <button onClick={downloadReportPDF}>Download PDF</button>
-          </div>
+          {editingId !== null && (
+            <section className="form-section">
+              <h2>Edit employee</h2>
 
-          {loading ? (
-            <p>Loading employees...</p>
-          ) : employees.length === 0 ? (
-            <p>No employees found.</p>
-          ) : (
-            <div className="employee-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Salary</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
+              <form onSubmit={updateEmployee}>
+                <input
+                  name="Name"
+                  placeholder="Name"
+                  value={editForm.Name}
+                  onChange={handleEditChange}
+                  required
+                />
 
-                <tbody>
-                  {employees.map((employee) => (
-                    <tr key={employee.Id}>
-                      <td>{employee.Id}</td>
-                      <td>{employee.Name}</td>
-                      <td>{employee.Department}</td>
-                      <td>{employee.Position}</td>
-                      <td>₱{Number(employee.Salary).toLocaleString()}</td>
-                      <td>
-                        <button onClick={() => startEdit(employee)}>
-                          Edit
-                        </button>
+                <input
+                  name="Department"
+                  placeholder="Department"
+                  value={editForm.Department}
+                  onChange={handleEditChange}
+                  required
+                />
 
-                        <button onClick={() => deleteEmployee(employee.Id)}>
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                <input
+                  name="Position"
+                  placeholder="Position"
+                  value={editForm.Position}
+                  onChange={handleEditChange}
+                  required
+                />
+
+                <input
+                  name="Salary"
+                  type="number"
+                  placeholder="Salary"
+                  value={editForm.Salary}
+                  onChange={handleEditChange}
+                  required
+                />
+
+                <button type="submit" className="btn-brass">Save changes</button>
+
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => setEditingId(null)}
+                >
+                  Cancel
+                </button>
+              </form>
+            </section>
           )}
-        </section>
-        {showReport && report && (
-          <section className="report-section">
-            <h2>Employee Report</h2>
 
-            <div className="report-summary">
+          <section>
+            <div className="section-header">
+              <h2>
+                Employees
+                {!loading && (
+                  <span className="count mono">{employees.length} on record</span>
+                )}
+              </h2>
               <div>
-                <h3>Total Employees</h3>
-                <p>{report.summary.TotalEmployees}</p>
-              </div>
-
-              <div>
-                <h3>Total Salary</h3>
-                <p>₱{Number(report.summary.TotalSalary).toLocaleString()}</p>
-              </div>
-
-              <div>
-                <h3>Average Salary</h3>
-                <p>₱{Number(report.summary.AverageSalary).toLocaleString()}</p>
+                <button className="btn-ghost" onClick={fetchEmployees}>Refresh</button>
+                <button className="btn-brass" onClick={fetchReport}>Generate report</button>
+                <button onClick={downloadReportPDF}>Download PDF</button>
               </div>
             </div>
 
-            <h3>Employee Details</h3>
+            {loading ? (
+              <div className="employee-table">
+                <div className="empty-state">
+                  <p>Loading the ledger…</p>
+                  <p>Fetching current employee records.</p>
+                </div>
+              </div>
+            ) : employees.length === 0 ? (
+              <div className="employee-table">
+                <div className="empty-state">
+                  <p>No employees on record yet</p>
+                  <p>Add your first employee above to start the ledger.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="employee-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Department</th>
+                      <th>Position</th>
+                      <th>Salary</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Department</th>
-                  <th>Position</th>
-                  <th>Salary</th>
-                </tr>
-              </thead>
+                  <tbody>
+                    {employees.map((employee) => (
+                      <tr key={employee.Id}>
+                        <td className="id-tag">#{employee.Id}</td>
+                        <td>
+                          <div className="name-cell">
+                            <span className="avatar">{initialsFor(employee.Name)}</span>
+                            {employee.Name}
+                          </div>
+                        </td>
+                        <td>
+                          <span className={badgeClassFor(employee.Department)}>
+                            {employee.Department}
+                          </span>
+                        </td>
+                        <td>{employee.Position}</td>
+                        <td className="salary-cell">
+                          ₱{Number(employee.Salary).toLocaleString()}
+                        </td>
+                        <td>
+                          <button onClick={() => startEdit(employee)}>
+                            Edit
+                          </button>
 
-              <tbody>
-                {report.employees.map((employee) => (
-                  <tr key={employee.Id}>
-                    <td>{employee.Id}</td>
-                    <td>{employee.Name}</td>
-                    <td>{employee.Department}</td>
-                    <td>{employee.Position}</td>
-                    <td>₱{Number(employee.Salary).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                          <button onClick={() => deleteEmployee(employee.Id)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
-        )}
-      </main>
+
+          {showReport && report && (
+            <section className="report-section">
+              <h2>Employee report</h2>
+
+              <div className="report-summary">
+                <div className="ledger-card">
+                  <h3>Total employees</h3>
+                  <p>{report.summary.TotalEmployees}</p>
+                </div>
+
+                <div className="ledger-card">
+                  <h3>Total salary</h3>
+                  <p>₱{Number(report.summary.TotalSalary).toLocaleString()}</p>
+                </div>
+
+                <div className="ledger-card">
+                  <h3>Average salary</h3>
+                  <p>₱{Number(report.summary.AverageSalary).toLocaleString()}</p>
+                </div>
+              </div>
+
+              <h3>Employee details</h3>
+
+              <div className="employee-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Department</th>
+                      <th>Position</th>
+                      <th>Salary</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {report.employees.map((employee) => (
+                      <tr key={employee.Id}>
+                        <td className="id-tag">#{employee.Id}</td>
+                        <td>
+                          <div className="name-cell">
+                            <span className="avatar">{initialsFor(employee.Name)}</span>
+                            {employee.Name}
+                          </div>
+                        </td>
+                        <td>
+                          <span className={badgeClassFor(employee.Department)}>
+                            {employee.Department}
+                          </span>
+                        </td>
+                        <td>{employee.Position}</td>
+                        <td className="salary-cell">
+                          ₱{Number(employee.Salary).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
