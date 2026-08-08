@@ -68,7 +68,14 @@ function App() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/employees')
+      const token = localStorage.getItem('token')
+
+      const response = await fetch('http://localhost:5000/api/employees', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
       const data = await response.json()
       setEmployees(data)
     } catch (error) {
@@ -96,7 +103,8 @@ function App() {
       const response = await fetch('http://localhost:5000/api/employees', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           Name: form.Name,
@@ -126,7 +134,10 @@ function App() {
   const deleteEmployee = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       })
 
       if (!response.ok) {
@@ -157,7 +168,8 @@ function App() {
       const response = await fetch(`http://localhost:5000/api/employees/${editingId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           Name: editForm.Name,
