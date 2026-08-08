@@ -2,6 +2,15 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem('token')
+  )
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+
   const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState(null)
@@ -19,6 +28,43 @@ function App() {
     Position: '',
     Salary: ''
   })
+
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    setLoginError('')
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Username: username,
+          Password: password
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed')
+      }
+
+      localStorage.setItem('token', data.token)
+      setIsLoggedIn(true)
+
+      setUsername('')
+      setPassword('')
+    } catch (error) {
+      setLoginError(error.message)
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+  }
 
   const fetchEmployees = async () => {
     try {
@@ -147,11 +193,48 @@ function App() {
     })
   }
 
+  if (!isLoggedIn) {
+    return (
+      <div className="login-container">
+        <div className="login-box">
+          <h1>Employee Management System</h1>
+          <h2>Login</h2>
+
+          <form onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              required
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+
+            {loginError && (
+              <p className="login-error">{loginError}</p>
+            )}
+
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <header className="header">
         <h1>Employee Management System</h1>
         <p>Manage your employees efficiently</p>
+
+        <button onClick={handleLogout}>Logout</button>
       </header>
 
       <main className="main">
