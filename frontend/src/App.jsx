@@ -4,6 +4,14 @@ import './App.css'
 function App() {
   const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState(null)
+
+  const [editForm, setEditForm] = useState({
+    Name: '',
+    Department: '',
+    Position: '',
+    Salary: ''
+  })
 
   const [form, setForm] = useState({
     Name: '',
@@ -85,6 +93,60 @@ function App() {
     }
   }
 
+  const startEdit = (employee) => {
+    setEditingId(employee.Id)
+
+    setEditForm({
+      Name: employee.Name,
+      Department: employee.Department,
+      Position: employee.Position,
+      Salary: employee.Salary
+    })
+  }
+
+  const updateEmployee = async (event) => {
+    event.preventDefault()
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/employees/${editingId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Name: editForm.Name,
+          Department: editForm.Department,
+          Position: editForm.Position,
+          Salary: Number(editForm.Salary)
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update employee')
+      }
+
+      setEditingId(null)
+
+      setEditForm({
+        Name: '',
+        Department: '',
+        Position: '',
+        Salary: ''
+      })
+
+      fetchEmployees()
+    } catch (error) {
+      console.error('Failed to update employee:', error)
+    }
+  }
+
+  const handleEditChange = (event) => {
+    setEditForm({
+      ...editForm,
+      [event.target.name]: event.target.value
+    })
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -133,6 +195,56 @@ function App() {
             <button type="submit">Add Employee</button>
           </form>
         </section>
+        
+        {editingId !== null && (
+          <section className="form-section">
+            <h2>Edit Employee</h2>
+
+            <form onSubmit={updateEmployee}>
+              <input
+                name="Name"
+                placeholder="Name"
+                value={editForm.Name}
+                onChange={handleEditChange}
+                required
+              />
+
+              <input
+                name="Department"
+                placeholder="Department"
+                value={editForm.Department}
+                onChange={handleEditChange}
+                required
+              />
+
+              <input
+                name="Position"
+                placeholder="Position"
+                value={editForm.Position}
+                onChange={handleEditChange}
+                required
+              />
+
+              <input
+                name="Salary"
+                type="number"
+                placeholder="Salary"
+                value={editForm.Salary}
+                onChange={handleEditChange}
+                required
+              />
+
+              <button type="submit">Update Employee</button>
+
+              <button
+                type="button"
+                onClick={() => setEditingId(null)}
+              >
+                Cancel
+              </button>
+            </form>
+          </section>
+        )}
 
         <section>
           <div className="section-header">
@@ -167,6 +279,10 @@ function App() {
                       <td>{employee.Position}</td>
                       <td>₱{Number(employee.Salary).toLocaleString()}</td>
                       <td>
+                        <button onClick={() => startEdit(employee)}>
+                          Edit
+                        </button>
+
                         <button onClick={() => deleteEmployee(employee.Id)}>
                           Delete
                         </button>
