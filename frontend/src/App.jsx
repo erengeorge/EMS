@@ -69,6 +69,22 @@ function App() {
     }
   }
 
+  const deleteEmployee = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/employees/${id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete employee')
+      }
+
+      fetchEmployees()
+    } catch (error) {
+      console.error('Failed to delete employee:', error)
+    }
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -138,6 +154,7 @@ function App() {
                     <th>Department</th>
                     <th>Position</th>
                     <th>Salary</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
 
@@ -149,6 +166,11 @@ function App() {
                       <td>{employee.Department}</td>
                       <td>{employee.Position}</td>
                       <td>₱{Number(employee.Salary).toLocaleString()}</td>
+                      <td>
+                        <button onClick={() => deleteEmployee(employee.Id)}>
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
