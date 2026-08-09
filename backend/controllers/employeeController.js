@@ -16,7 +16,18 @@ const getEmployees = async (req, res) => {
 
 const createEmployee = async (req, res) => {
     try {
-        const { Name, Department, Position, Salary } = req.body;
+        const {
+            Name,
+            Department,
+            Position,
+            Salary,
+            Email,
+            Phone,
+            Address,
+            DateOfBirth,
+            DateHired,
+            Status
+        } = req.body;
 
         const pool = await connectDB();
 
@@ -25,9 +36,37 @@ const createEmployee = async (req, res) => {
             .input("Department", sql.NVarChar(100), Department)
             .input("Position", sql.NVarChar(100), Position)
             .input("Salary", sql.Decimal(10, 2), Salary)
+            .input("Email", sql.NVarChar(100), Email)
+            .input("Phone", sql.NVarChar(20), Phone)
+            .input("Address", sql.NVarChar(255), Address)
+            .input("DateOfBirth", sql.Date, DateOfBirth)
+            .input("DateHired", sql.Date, DateHired)
+            .input("Status", sql.NVarChar(30), Status)
             .query(`
-                INSERT INTO Employees (Name, Department, Position, Salary)
-                VALUES (@Name, @Department, @Position, @Salary)
+                INSERT INTO Employees (
+                    Name,
+                    Department,
+                    Position,
+                    Salary,
+                    Email,
+                    Phone,
+                    Address,
+                    DateOfBirth,
+                    DateHired,
+                    Status
+                )
+                VALUES (
+                    @Name,
+                    @Department,
+                    @Position,
+                    @Salary,
+                    @Email,
+                    @Phone,
+                    @Address,
+                    @DateOfBirth,
+                    @DateHired,
+                    @Status
+                )
             `);
 
         res.status(201).json({
@@ -44,7 +83,18 @@ const createEmployee = async (req, res) => {
 const updateEmployee = async (req, res) => {
     try {
         const { id } = req.params;
-        const { Name, Department, Position, Salary } = req.body;
+        const {
+            Name,
+            Department,
+            Position,
+            Salary,
+            Email,
+            Phone,
+            Address,
+            DateOfBirth,
+            DateHired,
+            Status
+        } = req.body;
 
         const pool = await connectDB();
 
@@ -54,12 +104,24 @@ const updateEmployee = async (req, res) => {
             .input("Department", sql.NVarChar(100), Department)
             .input("Position", sql.NVarChar(100), Position)
             .input("Salary", sql.Decimal(10, 2), Salary)
+            .input("Email", sql.NVarChar(100), Email)
+            .input("Phone", sql.NVarChar(20), Phone)
+            .input("Address", sql.NVarChar(255), Address)
+            .input("DateOfBirth", sql.Date, DateOfBirth)
+            .input("DateHired", sql.Date, DateHired)
+            .input("Status", sql.NVarChar(30), Status)
             .query(`
                 UPDATE Employees
                 SET Name = @Name,
                     Department = @Department,
                     Position = @Position,
-                    Salary = @Salary
+                    Salary = @Salary,
+                    Email = @Email,
+                    Phone = @Phone,
+                    Address = @Address,
+                    DateOfBirth = @DateOfBirth,
+                    DateHired = @DateHired,
+                    Status = @Status
                 WHERE Id = @Id
             `);
 
@@ -125,6 +187,8 @@ const getEmployeeReport = async (req, res) => {
                 Name,
                 Department,
                 Position,
+                Status,
+                Phone,
                 Salary
             FROM Employees
             ORDER BY Id

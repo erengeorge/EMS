@@ -1,7 +1,7 @@
 :root {
   font-family: 'Inter', Helvetica, sans-serif;
-  color: #10192b;
-  background: #eef1f6;
+  color: #142b24;
+  background: #f2f5f1;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -17,7 +17,7 @@ body,
 }
 
 body {
-  background: #eef1f6;
+  background: #f2f5f1;
 }
 
 #root {

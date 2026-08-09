@@ -1,20 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap');
 
 :root {
-  --ink: #10192b;
-  --ink-soft: #4d5a72;
-  --ink-faint: #8894a8;
-  --paper: #eef1f6;
+  --ink: #142b24;
+  --ink-soft: #4b6259;
+  --ink-faint: #86988f;
+  --paper: #f2f5f1;
   --card: #ffffff;
-  --line: #dbe1eb;
-  --brass: #a9741f;
-  --brass-deep: #7c5416;
-  --brass-light: #f2c877;
-  --brass-tint: #fbf1dc;
+  --line: #dde5df;
+
+  --rx: #1f6e52;
+  --rx-deep: #14503b;
+  --rx-light: #6fbf9c;
+  --rx-tint: #e3f3ea;
+
+  --amber: #b8791f;
+  --amber-deep: #8f5c14;
+  --amber-tint: #faf1de;
+
+  --blue: #2c5ea8;
+  --blue-tint: #e8eef8;
+
+  --purple: #6a3f96;
+  --purple-tint: #f1e9f7;
+
   --green: #1f6f4a;
   --green-tint: #e5f3ec;
-  --red: #ab2b2b;
-  --red-tint: #fbe9e9;
+
+  --red: #b23b30;
+  --red-tint: #f9e9e7;
 }
 
 * {
@@ -23,25 +36,29 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', Helvetica, sans-serif;
+  font-family: 'Arial', Helvetica, sans-serif;
   background: var(--paper);
   color: var(--ink);
 }
 
+::-webkit-scrollbar { 
+  display: none; 
+}
+
 h1, h2, h3 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Arial', Georgia, serif;
   letter-spacing: -0.01em;
 }
 
 .mono {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
 }
 
 button {
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 11px 18px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Arial', sans-serif;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -53,7 +70,7 @@ button {
 
 button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(16, 25, 43, 0.18);
+  box-shadow: 0 4px 10px rgba(20, 43, 36, 0.18);
 }
 
 button:active {
@@ -62,33 +79,67 @@ button:active {
 }
 
 button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--brass);
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--rx);
   outline-offset: 2px;
 }
 
-input {
+input,
+select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 3px;
-  font-family: 'Inter', sans-serif;
+  border-radius: 4px;
+  font-family: 'Arial', sans-serif;
   font-size: 14px;
   outline: none;
   background: white;
   color: var(--ink);
 }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7' fill='none'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%2386988f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+select:invalid {
+  color: var(--ink-faint);
+}
+
 input::placeholder {
   color: var(--ink-faint);
 }
 
-input:focus {
-  border-color: var(--brass);
-  box-shadow: 0 0 0 3px var(--brass-tint);
+input:focus,
+select:focus {
+  border-color: var(--rx);
+  box-shadow: 0 0 0 3px var(--rx-tint);
 }
 
-/* ---------- App shell ---------- */
+/* Form fields with labels */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+/* App shell */
 
 .app {
   min-height: 100vh;
@@ -110,24 +161,25 @@ input:focus {
 }
 
 .rail-mark {
+  position: relative;
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 1.5px solid var(--brass-light);
+  border: 1.5px solid var(--rx-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Fraunces', serif;
+  font-family: 'Arial', serif;
   font-weight: 600;
-  font-size: 16px;
-  color: var(--brass-light);
+  font-size: 15px;
+  color: var(--rx-light);
   letter-spacing: 0;
 }
 
 .rail-line {
   width: 1px;
   flex: 1;
-  background: linear-gradient(to bottom, rgba(242, 200, 119, 0.35), rgba(242, 200, 119, 0));
+  background: linear-gradient(to bottom, rgba(111, 191, 156, 0.35), rgba(111, 191, 156, 0));
   margin: 22px 0;
 }
 
@@ -135,7 +187,7 @@ input:focus {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   background: transparent;
-  color: #aab4c8;
+  color: #a9b8b0;
   padding: 14px 10px;
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -161,11 +213,11 @@ input:focus {
 }
 
 .header-eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--brass-deep);
+  color: var(--rx-deep);
   margin: 0 0 8px;
 }
 
@@ -187,7 +239,7 @@ input:focus {
   margin: 34px auto 60px;
 }
 
-/* ---------- Ledger tab cards (report summary) ---------- */
+/* Stat cards (report summary) */
 
 .report-summary {
   display: grid;
@@ -196,29 +248,28 @@ input:focus {
   margin: 20px 0 32px;
 }
 
-.ledger-card {
+.stat-card {
   position: relative;
   background: var(--card);
   border: 1px solid var(--line);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  padding: 24px 22px 20px;
+  border-radius: 10px;
+  padding: 26px 22px 20px;
+  overflow: hidden;
 }
 
-.ledger-card::before {
+.stat-card::before {
   content: '';
   position: absolute;
-  top: -9px;
-  left: 20px;
-  width: 46px;
-  height: 9px;
-  background: var(--brass);
-  border-radius: 4px 4px 0 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--ink);
 }
 
-.ledger-card h3 {
+.stat-card h3 {
   margin: 0 0 10px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -226,22 +277,22 @@ input:focus {
   font-weight: 600;
 }
 
-.ledger-card p {
+.stat-card p {
   margin: 0;
-  font-family: 'Fraunces', serif;
+  font-family: 'Arial', serif;
   font-size: 28px;
   font-weight: 600;
   color: var(--ink);
 }
 
-/* ---------- Sections ---------- */
+/* Sections */
 
 .form-section,
 .report-section,
 .employee-table {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .form-section {
@@ -262,7 +313,7 @@ input:focus {
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: var(--brass);
+  background: var(--rx);
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -270,7 +321,8 @@ input:focus {
 .form-section form {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 14px;
+  align-items: end;
 }
 
 .form-section form button {
@@ -291,7 +343,7 @@ input:focus {
 }
 
 .section-header .count {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 13px;
   color: var(--ink-faint);
   font-weight: 500;
@@ -315,15 +367,15 @@ input:focus {
   transform: none;
 }
 
-.btn-brass {
-  background: var(--brass);
+.btn-primary {
+  background: var(--rx);
 }
 
-.btn-brass:hover {
-  background: var(--brass-deep);
+.btn-primary:hover {
+  background: var(--rx-deep);
 }
 
-/* ---------- Table ---------- */
+/* Table */
 
 .employee-table {
   overflow-x: auto;
@@ -338,7 +390,7 @@ table {
 th {
   background: var(--paper);
   color: var(--ink-soft);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -361,11 +413,11 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: #f8f9fc;
+  background: #f7faf8;
 }
 
 .id-tag {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 12px;
   color: var(--ink-faint);
 }
@@ -381,11 +433,11 @@ tbody tr:hover {
   height: 32px;
   border-radius: 50%;
   background: var(--ink);
-  color: var(--brass-light);
+  color: var(--rx-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Fraunces', serif;
+  font-family: 'Arial', serif;
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
@@ -397,18 +449,44 @@ tbody tr:hover {
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  background: var(--brass-tint);
-  color: var(--brass-deep);
-  border: 1px solid rgba(169, 116, 31, 0.25);
+  background: var(--rx-tint);
+  color: var(--rx-deep);
+  border: 1px solid rgba(31, 110, 82, 0.25);
 }
 
-.badge-b { background: #e6edf9; color: #2c4a86; border-color: rgba(44, 74, 134, 0.2); }
+.badge-b { background: var(--blue-tint); color: var(--blue); border-color: rgba(44, 94, 168, 0.2); }
 .badge-c { background: var(--green-tint); color: var(--green); border-color: rgba(31, 111, 74, 0.22); }
-.badge-d { background: #f2e6f9; color: #6a2f8f; border-color: rgba(106, 47, 143, 0.2); }
-.badge-e { background: var(--red-tint); color: var(--red); border-color: rgba(171, 43, 43, 0.2); }
+.badge-d { background: var(--purple-tint); color: var(--purple); border-color: rgba(106, 63, 150, 0.2); }
+.badge-e { background: var(--amber-tint); color: var(--amber-deep); border-color: rgba(184, 121, 31, 0.25); }
+
+/* Status pills */
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+
+.status-active { background: var(--rx-tint); color: var(--rx-deep); border-color: rgba(31, 110, 82, 0.25); }
+.status-leave { background: var(--amber-tint); color: var(--amber-deep); border-color: rgba(184, 121, 31, 0.25); }
+.status-probation { background: var(--blue-tint); color: var(--blue); border-color: rgba(44, 94, 168, 0.2); }
+.status-resigned { background: #eef1ef; color: var(--ink-soft); border-color: var(--line); }
+.status-terminated { background: var(--red-tint); color: var(--red); border-color: rgba(178, 59, 48, 0.22); }
+
+.status-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 6px;
+}
 
 .salary-cell {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-weight: 600;
   color: var(--ink);
 }
@@ -429,15 +507,15 @@ td button:hover {
 }
 
 td button:first-child:hover {
-  background: var(--brass-tint);
-  color: var(--brass-deep);
-  border-color: rgba(169, 116, 31, 0.3);
+  background: var(--rx-tint);
+  color: var(--rx-deep);
+  border-color: rgba(31, 110, 82, 0.3);
 }
 
 td button:last-child:hover {
   background: var(--red-tint);
   color: var(--red);
-  border-color: rgba(171, 43, 43, 0.25);
+  border-color: rgba(178, 59, 48, 0.25);
 }
 
 .empty-state {
@@ -447,7 +525,7 @@ td button:last-child:hover {
 }
 
 .empty-state p:first-child {
-  font-family: 'Fraunces', serif;
+  font-family: 'Arial', serif;
   font-size: 18px;
   color: var(--ink);
   margin: 0 0 6px;
@@ -459,7 +537,7 @@ td button:last-child:hover {
   color: var(--ink-faint);
 }
 
-/* ---------- Report section ---------- */
+/* Report section */
 
 .report-section {
   padding: 26px;
@@ -473,7 +551,7 @@ td button:last-child:hover {
   margin: 26px 0 14px;
 }
 
-/* ---------- Login ---------- */
+/* Login */
 
 .login-container {
   min-height: 100vh;
@@ -481,7 +559,7 @@ td button:last-child:hover {
   justify-content: center;
   align-items: center;
   background:
-    radial-gradient(circle at 15% 20%, rgba(242, 200, 119, 0.08), transparent 45%),
+    radial-gradient(circle at 15% 20%, rgba(111, 191, 156, 0.1), transparent 45%),
     var(--ink);
   padding: 20px;
 }
@@ -490,22 +568,23 @@ td button:last-child:hover {
   width: min(400px, 100%);
   background: var(--card);
   padding: 40px 36px;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
 .login-seal {
+  position: relative;
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  border: 1.5px solid var(--brass);
+  border: 1.5px solid var(--rx);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Fraunces', serif;
+  font-family: 'Arial', serif;
   font-weight: 600;
-  font-size: 18px;
-  color: var(--brass-deep);
+  font-size: 17px;
+  color: var(--rx-deep);
   margin-bottom: 18px;
 }
 
@@ -519,7 +598,7 @@ td button:last-child:hover {
 .login-box h2 {
   margin: 0 0 26px;
   color: var(--ink-faint);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Arial', monospace;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.1em;
@@ -540,7 +619,7 @@ td button:last-child:hover {
 }
 
 .login-box button:hover {
-  background: #060b16;
+  background: #060f0b;
 }
 
 .login-error {
@@ -551,6 +630,122 @@ td button:last-child:hover {
   color: var(--red);
   font-size: 13px;
   border-left: 3px solid var(--red);
+}
+
+.employee-name {
+  cursor: pointer;
+}
+
+.employee-name:hover {
+  text-decoration: underline;
+}
+
+/* Employee detail modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 17, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.employee-modal {
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 30px 70px rgba(20, 43, 36, 0.35);
+  padding: 28px;
+  text-align: left;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header p {
+  margin: 0 0 6px;
+  font-family: 'Arial', monospace;
+  font-size: 11px;
+  color: var(--rx-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.modal-header button {
+  background: transparent;
+  color: var(--ink-faint);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.modal-header button:hover {
+  background: var(--paper);
+  color: var(--ink);
+  transform: none;
+}
+
+.employee-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.employee-details > div {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.employee-details span {
+  display: block;
+  margin-bottom: 5px;
+  font-family: 'Arial', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.employee-details strong {
+  display: block;
+  font-weight: 500;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+@media (max-width: 600px) {
+  .employee-modal {
+    padding: 20px;
+  }
+
+  .employee-details {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
